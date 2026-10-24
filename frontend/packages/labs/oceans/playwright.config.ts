@@ -52,6 +52,21 @@ export default defineConfig({
       use: {...devices['Desktop Safari']},
       grepInvert: /@visual/,
     },
+    {
+      name: 'pixel',
+      use: {...devices['Pixel 7']},
+      grepInvert: /@visual/,
+    },
+    {
+      name: 'iphone',
+      use: {...devices['iPhone 13']},
+      grepInvert: /@visual/,
+    },
+    {
+      name: 'ipad',
+      use: {...devices['iPad Mini']},
+      grepInvert: /@visual/,
+    },
     // Visual projects register only when VISUAL_PROVIDER is set; `playwright
     // test` (no args) runs the 3 e2e projects only. Oceans widens past the
     // chromium-only default to cover all three browsers.
