@@ -68,7 +68,7 @@ export default defineConfig({
       grepInvert: /@visual/,
     },
     // Visual projects register only when VISUAL_PROVIDER is set; `playwright
-    // test` (no args) runs the 3 e2e projects only. Oceans widens past the
+    // test` (no args) runs the 6 e2e projects only. Oceans widens past the
     // chromium-only default to cover all three browsers.
     ...visualProjects({browsers: ['chromium', 'firefox', 'webkit']}),
   ],

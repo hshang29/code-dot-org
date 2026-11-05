@@ -211,6 +211,7 @@ const guidesK5: GuideEntry[] = [
       appMode: AppMode.CreaturesVTrashDemo,
       currentMode: Modes.Predicting,
       isPaused: true,
+      canSkipPredict: true,
     },
     noDimBackground: true,
     arrow: 'LowerRight',

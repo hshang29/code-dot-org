@@ -159,6 +159,9 @@ Sounds.prototype.whenAudioUnlocked = function (callback) {
  *        audio was unlocked successfully.
  */
 Sounds.prototype.unlockAudio = function (onComplete) {
+  if (this.audioContext && this.audioContext.state === 'suspended') {
+    this.audioContext.resume().catch(function () {});
+  }
   if (this.isAudioUnlocked()) {
     return;
   }
@@ -282,6 +285,9 @@ Sounds.prototype.register = function (config) {
  * @param {function} [options.onEnded]
  */
 Sounds.prototype.play = function (soundId, options) {
+  if (this.audioContext && this.audioContext.state === 'suspended') {
+    this.audioContext.resume().catch(function () {});
+  }
   var sound = this.soundsById[soundId];
   if (sound) {
     sound.play(options);

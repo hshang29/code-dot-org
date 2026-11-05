@@ -50,6 +50,20 @@ const GUIDE_ARROW_CLASS: Record<string, string> = {
 class Guide extends React.Component<Record<string, never>> {
   guideDialogRef = React.createRef<HTMLDivElement>();
   lastFocusedGuideId: string | null = null;
+  state = {revealedGuideId: null as string | null};
+
+  revealText = () => {
+    const currentGuide = guide.getCurrentGuide();
+    if (!currentGuide) return;
+    stopTypingSounds();
+    this.setState({revealedGuideId: currentGuide.id});
+    setState({guideShowing: true});
+  };
+
+  onInfoContinue = () => {
+    stopTypingSounds();
+    if (guide.dismissCurrentGuide(true)) stopTextToSpeech();
+  };
 
   componentDidUpdate() {
     // Focus the dialog only when the guide changes, not on every re-render
@@ -87,6 +101,13 @@ class Guide extends React.Component<Record<string, never>> {
   onGuideClick = () => {
     const state = getState();
     const currentGuide = guide.getCurrentGuide();
+
+    if (!currentGuide) return;
+    if (!state.guideShowing) {
+      this.revealText();
+      return;
+    }
+    if (currentGuide.style === 'Info') return;
 
     if (this.attemptTextToSpeechTextToSpeech(true)) {
       // This click started text to speech.
@@ -225,13 +246,19 @@ class Guide extends React.Component<Record<string, never>> {
             <div
               key={currentGuide.id}
               className={bgClassName}
-              onClick={this.onGuideClick}
+              onClick={
+                currentGuide.style === 'Info' ? undefined : this.onGuideClick
+              }
               id="uitest-dismiss-guide"
             >
               <div
                 aria-labelledby="guide-heading"
                 tabIndex={-1}
                 className={`guide-dialog ${guideClassName}`}
+                onClick={event => {
+                  event.stopPropagation();
+                  this.onGuideClick();
+                }}
               >
                 <div>
                   {currentGuide.style === 'Info' && (
@@ -242,14 +269,18 @@ class Guide extends React.Component<Record<string, never>> {
 
                   {/* Visible Typist animation for sighted users */}
                   <div className="ocean-guide__typing-text" aria-hidden="true">
-                    <Typist
-                      avgTypingDelay={35}
-                      stdTypingDelay={15}
-                      cursor={{show: false}}
-                      onTypingDone={this.onTypingDone}
-                    >
-                      {currentGuide.textFn(getState())}
-                    </Typist>
+                    {this.state.revealedGuideId === currentGuide.id ? (
+                      currentGuide.textFn(getState())
+                    ) : (
+                      <Typist
+                        avgTypingDelay={20}
+                        stdTypingDelay={5}
+                        cursor={{show: false}}
+                        onTypingDone={this.onTypingDone}
+                      >
+                        {currentGuide.textFn(getState())}
+                      </Typist>
+                    )}
                   </div>
 
                   <div
@@ -286,7 +317,8 @@ class Guide extends React.Component<Record<string, never>> {
                   {currentGuide.style === 'Info' && (
                     <Button
                       className="ocean-guide__info-button"
-                      onClick={() => {}}
+                      dismissGuide={false}
+                      onClick={this.onInfoContinue}
                     >
                       {I18n.t('continue')}
                     </Button>

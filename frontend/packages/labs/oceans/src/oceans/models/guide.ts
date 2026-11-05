@@ -43,20 +43,24 @@ const getCurrentGuide = (): GuideEntry | null => {
 };
 
 /**
- * Dismiss the currently visible guide if one is showing.
+ * Dismiss the current guide; explicit Continue actions may skip unfinished typing.
  *
  * @returns True if a guide was dismissed; false if none was active or visible.
  */
-const dismissCurrentGuide = (): boolean => {
+const dismissCurrentGuide = (allowWhileTyping = false): boolean => {
   const currentGuide = getCurrentGuide();
 
-  // If we have a current guide, and it's actually showing (rather than still typing).
-  if (currentGuide && getState().guideShowing) {
+  if (currentGuide && (getState().guideShowing || allowWhileTyping)) {
     const state = getState();
+    if (state.guideTypingTimer) clearInterval(state.guideTypingTimer);
     const currentGuideDismissals = state.guideDismissals;
     const newGuideDismissals = [...currentGuideDismissals];
     newGuideDismissals.push(currentGuide.id);
-    setState({guideDismissals: newGuideDismissals, guideShowing: false});
+    setState({
+      guideDismissals: newGuideDismissals,
+      guideShowing: false,
+      guideTypingTimer: undefined,
+    });
 
     return true;
   }

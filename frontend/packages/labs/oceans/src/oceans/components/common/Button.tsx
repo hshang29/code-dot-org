@@ -7,10 +7,11 @@ import soundLibrary from '@/oceans/models/soundLibrary';
 interface ButtonProps
   extends Pick<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    'className' | 'style' | 'id' | 'children'
+    'className' | 'style' | 'id' | 'children' | 'disabled'
   > {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => boolean | void;
   sound?: string;
+  dismissGuide?: boolean;
 }
 
 /**
@@ -20,7 +21,10 @@ interface ButtonProps
  */
 class Button extends React.Component<ButtonProps> {
   onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    guide.dismissCurrentGuide();
+    event.stopPropagation();
+    if (this.props.dismissGuide !== false) {
+      guide.dismissCurrentGuide(true);
+    }
     const clickReturnValue = this.props.onClick && this.props.onClick(event);
 
     if (clickReturnValue !== false) {
@@ -40,6 +44,7 @@ class Button extends React.Component<ButtonProps> {
         className={className}
         style={this.props.style}
         onClick={this.onClick}
+        disabled={this.props.disabled}
       >
         {this.props.children}
       </button>

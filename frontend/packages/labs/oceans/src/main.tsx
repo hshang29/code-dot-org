@@ -16,10 +16,10 @@ initializeCore({plugins: [localizationPlugin]});
 /** All playable modes in sequence, used by the mode picker and onContinue handler. */
 const APP_MODES: {id: AppModeValue; label: string}[] = [
   {id: AppMode.FishVTrash, label: 'Fish vs Trash'},
+  {id: AppMode.CreaturesVTrashDemo, label: 'Creatures Demo'},
+  {id: AppMode.CreaturesVTrash, label: 'Creatures vs Trash'},
   {id: AppMode.FishShort, label: 'Fish Short'},
   {id: AppMode.FishLong, label: 'Fish Long'},
-  {id: AppMode.CreaturesVTrash, label: 'Creatures vs Trash'},
-  {id: AppMode.CreaturesVTrashDemo, label: 'Creatures Demo'},
 ];
 
 /** Read initial mode from ?mode= URL param, fallback to FishVTrash. */

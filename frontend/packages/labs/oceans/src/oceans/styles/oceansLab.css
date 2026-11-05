@@ -16,6 +16,8 @@
 .oceans-lab-shell {
   flex: 1;
   min-height: 0;
+  container-type: size;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;
