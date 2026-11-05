@@ -38,8 +38,13 @@ test('guide gives full text once and provides keyboard Continue', async ({
     'aria-hidden',
     'true',
   );
-  await page.keyboard.press('Tab');
   const next = dialog.getByRole('button', {name: 'Continue', exact: true});
+  await expect(next).toHaveAttribute('aria-label', 'Continue');
+  await expect(next).toHaveCSS('clip-path', 'none');
+  const initialBox = await next.boundingBox();
+  expect(initialBox!.height).toBeGreaterThanOrEqual(44);
+  await expect(next).not.toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(next).toBeFocused();
   const dialogBox = await dialog.boundingBox();
   const buttonBox = await next.boundingBox();

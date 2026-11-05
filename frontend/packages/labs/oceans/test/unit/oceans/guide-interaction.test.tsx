@@ -89,3 +89,19 @@ describe('guide interactions', () => {
     expect(answer).not.toHaveBeenCalled();
   });
 });
+
+it.each(['Info', 'Center', undefined])(
+  'gives the %s guide Continue button an explicit accessible name before focus',
+  style => {
+    vi.mocked(guide.getCurrentGuide).mockReturnValue({
+      id: 'named-guide',
+      style,
+      when: {},
+      textFn: () => 'Instructions',
+    });
+    const {getByRole} = render(<Guide />);
+    const button = getByRole('button', {name: 'continue'});
+    expect(button.getAttribute('aria-label')).toBe('continue');
+    expect(button).not.toBe(document.activeElement);
+  },
+);

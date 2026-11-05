@@ -818,16 +818,12 @@
   border: 0;
 }
 
-.ocean-focusable:focus {
-  position: relative !important;
+.ocean-guide__continue-button {
   display: block;
-  width: auto;
-  height: auto;
-  clip-path: none;
-  padding: 0.75em;
-  margin: 0;
-  z-index: 10;
-  background: var(--ocean-color-white);
+  min-height: 44px;
+  min-width: 88px;
+  margin: 0.5em auto;
+  background-color: var(--ocean-color-white);
   color: var(--ocean-color-dark-grey);
 }
 

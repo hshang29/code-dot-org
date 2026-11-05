@@ -301,7 +301,8 @@ class Guide extends React.Component<Record<string, never>> {
                   {!currentGuide.noDimBackground &&
                     currentGuide.style !== 'Info' && (
                       <Button
-                        className="ocean-visually-hidden ocean-focusable"
+                        aria-label={I18n.t('continue')}
+                        className="ocean-guide__continue-button"
                         dismissGuide={false}
                         onClick={this.onInfoContinue}
                       >
@@ -310,6 +311,7 @@ class Guide extends React.Component<Record<string, never>> {
                     )}
                   {currentGuide.style === 'Info' && (
                     <Button
+                      aria-label={I18n.t('continue')}
                       className="ocean-guide__info-button"
                       dismissGuide={false}
                       onClick={this.onInfoContinue}
