@@ -226,6 +226,7 @@ class Guide extends React.Component<Record<string, never>> {
             >
               <Dialog
                 modal={!currentGuide.noDimBackground}
+                initialFocusSelector="button"
                 lang={I18n.getMessageLocale(
                   currentGuide.style === 'Info'
                     ? 'didYouKnow'
@@ -302,6 +303,7 @@ class Guide extends React.Component<Record<string, never>> {
                     currentGuide.style !== 'Info' && (
                       <Button
                         aria-label={I18n.t('continue')}
+                        aria-describedby="ocean-guide-text"
                         className="ocean-guide__continue-button"
                         dismissGuide={false}
                         onClick={this.onInfoContinue}
@@ -312,6 +314,7 @@ class Guide extends React.Component<Record<string, never>> {
                   {currentGuide.style === 'Info' && (
                     <Button
                       aria-label={I18n.t('continue')}
+                      aria-describedby="ocean-guide-text"
                       className="ocean-guide__info-button"
                       dismissGuide={false}
                       onClick={this.onInfoContinue}

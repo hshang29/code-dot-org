@@ -31,7 +31,6 @@ test('guide gives full text once and provides keyboard Continue', async ({
   await page.goto('/');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible({timeout: 30_000});
-  await expect(dialog).toBeFocused();
   await expect(dialog).toHaveAttribute('aria-describedby', 'ocean-guide-text');
   await expect(dialog.locator('#ocean-guide-text')).not.toBeEmpty();
   await expect(dialog.locator('.ocean-guide__typing-text')).toHaveAttribute(
@@ -43,7 +42,10 @@ test('guide gives full text once and provides keyboard Continue', async ({
   await expect(next).toHaveCSS('clip-path', 'none');
   const initialBox = await next.boundingBox();
   expect(initialBox!.height).toBeGreaterThanOrEqual(44);
-  await expect(next).not.toBeFocused();
+  await expect(next).toBeFocused();
+  await expect(next).toHaveAccessibleDescription(
+    (await dialog.locator('#ocean-guide-text').innerText()).trim(),
+  );
   await page.keyboard.press('Tab');
   await expect(next).toBeFocused();
   const dialogBox = await dialog.boundingBox();
@@ -56,7 +58,7 @@ test('guide gives full text once and provides keyboard Continue', async ({
   const text = await dialog.locator('#ocean-guide-text').textContent();
   await page.keyboard.press('Enter');
   await expect(dialog.locator('#ocean-guide-text')).not.toHaveText(text!);
-  await expect(dialog).toBeFocused();
+  await expect(next).toBeFocused();
 });
 
 test('erase dialog traps focus and Escape returns to Erase', async ({page}) => {

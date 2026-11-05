@@ -1,4 +1,4 @@
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {cleanup, fireEvent, render, waitFor} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import Button from '@/oceans/components/common/Button';
@@ -40,6 +40,27 @@ beforeEach(() => {
 });
 
 describe('guide interactions', () => {
+  it('focuses Continue with the full message when a training popup appears', async () => {
+    vi.mocked(guide.getCurrentGuide).mockReturnValue(undefined);
+    const {rerender, getByRole} = render(<Guide />);
+    vi.mocked(guide.getCurrentGuide).mockReturnValue({
+      id: 'training-reminder',
+      style: 'Center',
+      when: {},
+      textFn: () =>
+        'More training data will help A.I. learn your word. Keep training.',
+    });
+    rerender(<Guide />);
+    const button = getByRole('button', {name: 'continue'});
+    await waitFor(() => expect(document.activeElement).toBe(button));
+    expect(button.getAttribute('aria-describedby')).toBe('ocean-guide-text');
+    expect(document.getElementById('ocean-guide-text')?.textContent).toBe(
+      'More training data will help A.I. learn your word. Keep training.',
+    );
+    rerender(<Guide />);
+    expect(document.activeElement).toBe(button);
+  });
+
   it('reveals unfinished text without dismissing or continuing', () => {
     const {container} = render(<Guide />);
     fireEvent.click(container.querySelector('.guide-dialog')!);

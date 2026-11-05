@@ -5,12 +5,14 @@ import {OCEANS_UI_CONTAINER_ID} from '@/oceans/constants';
 
 interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   modal?: boolean;
+  initialFocusSelector?: string;
   onDismiss?: () => void;
   returnFocusId?: string;
 }
 
 export default function Dialog({
   modal = true,
+  initialFocusSelector,
   onDismiss,
   returnFocusId,
   children,
@@ -20,8 +22,17 @@ export default function Dialog({
   useLayoutEffect(() => {
     if (!modal) return;
     const previous = document.activeElement as HTMLElement | null;
-    ref.current?.focus();
+    // Let the browser expose newly mounted guide content before moving focus.
+    const frame = initialFocusSelector
+      ? requestAnimationFrame(() => {
+          const target =
+            ref.current?.querySelector<HTMLElement>(initialFocusSelector);
+          (target ?? ref.current)?.focus();
+        })
+      : undefined;
+    if (!initialFocusSelector) ref.current?.focus();
     return () => {
+      if (frame !== undefined) cancelAnimationFrame(frame);
       queueMicrotask(() => {
         if (
           document.querySelector(
@@ -41,7 +52,7 @@ export default function Dialog({
             ?.focus();
       });
     };
-  }, [modal, returnFocusId]);
+  }, [modal, returnFocusId, initialFocusSelector]);
 
   if (!modal)
     return (
