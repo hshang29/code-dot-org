@@ -159,6 +159,9 @@ export class OceanObject {
   /** Unique identifier for this object. */
   id: number | string;
 
+  /** Localized description supplied by an image author or generation pipeline. */
+  accessibleDescription?: string;
+
   /** Flattened numeric feature vector used by KNN classifier. */
   knnData: number[] | null;
 

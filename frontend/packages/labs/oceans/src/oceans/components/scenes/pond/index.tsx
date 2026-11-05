@@ -7,13 +7,14 @@ import aiBotClosed from '@/assets/images/ai-bot/ai-bot-closed.png';
 import {Body, Button} from '@/oceans/components/common';
 import PondPanel from '@/oceans/components/scenes/pond/PondPanel';
 import constants, {AppMode, Modes} from '@/oceans/constants';
+import {describeObject} from '@/oceans/describeObject';
 import helpers, {$time} from '@/oceans/helpers';
 import I18n from '@/oceans/i18n';
 import modeHelpers from '@/oceans/modeHelpers';
 import guide from '@/oceans/models/guide';
 import {arrangeFish} from '@/oceans/models/pond';
 import soundLibrary from '@/oceans/models/soundLibrary';
-import {getState, setState} from '@/oceans/state';
+import {getState, setState, type PondFish} from '@/oceans/state';
 import SVMTrainer from '@/utils/SVMTrainer';
 
 /** True when the current mode trains an SVM on word-attribute fish. */
@@ -185,6 +186,24 @@ class Pond extends React.Component {
     }
   };
 
+  selectAccessibleFish = (fish: PondFish) => {
+    const state = getState();
+    const xy = fish.getXY() ?? {x: 0, y: 0};
+    setState({
+      pondClickedFish: {id: fish.id, ...xy},
+      pondPanelShowing: true,
+      pondPanelSide: 'right',
+    });
+    if (fish.knnData && state.trainer instanceof SVMTrainer) {
+      setState({
+        pondExplainFishSummary: state.trainer.explainFish({
+          knnData: fish.knnData,
+          fieldInfos: fish.fieldInfos,
+        }),
+      });
+    }
+  };
+
   onPondPanelButtonClick = (e: React.MouseEvent | null) => {
     const state = getState();
 
@@ -235,7 +254,7 @@ class Pond extends React.Component {
       <Body>
         <div
           role="button"
-          aria-label="Fish pond"
+          aria-label={I18n.t('a11yPond')}
           tabIndex={0}
           onClick={this.onPondClick}
           onKeyDown={e => {
@@ -249,6 +268,7 @@ class Pond extends React.Component {
         <div className={recallIconsClassName}>
           <button
             key="toggle-matching"
+            aria-pressed={!state.showRecallFish}
             type="button"
             onClick={e => this.getMatchingFishSet(e, true)}
             aria-label={I18n.t('switchToMatchingItems')}
@@ -261,6 +281,7 @@ class Pond extends React.Component {
           </button>
           <button
             key="toggle-non-matching"
+            aria-pressed={state.showRecallFish}
             type="button"
             onClick={e => this.getMatchingFishSet(e, false)}
             aria-label={I18n.t('switchToNonMatchingItems')}
@@ -276,7 +297,7 @@ class Pond extends React.Component {
           <button
             type="button"
             id="uitest-info-btn"
-            aria-label={I18n.t('fishInformation')}
+            aria-label={I18n.t('a11yFishInformation')}
             aria-pressed={state.pondPanelShowing ? 'true' : 'false'}
             className={infoButtonClassName}
             onClick={this.onPondPanelButtonClick}
@@ -331,6 +352,45 @@ class Pond extends React.Component {
             </div>
           </div>
         )}
+        <details className="ocean-accessible-results">
+          <summary>{I18n.t('a11yResults')}</summary>
+          <p>
+            {I18n.t('a11yResultsSummary', {
+              matching: state.totalPondFish ?? state.pondFish.length,
+              total: state.fishData.length,
+              word: state.word ?? '',
+            })}
+          </p>
+          <h3>
+            {I18n.t(state.showRecallFish ? 'a11yNotMatching' : 'a11yMatching')}
+          </h3>
+          <p>
+            {I18n.t('a11yDisplayedObjects', {
+              count: (state.showRecallFish ? state.recallFish : state.pondFish)
+                .length,
+            })}
+          </p>
+          <ul>
+            {(state.showRecallFish ? state.recallFish : state.pondFish).map(
+              (fish, index) => (
+                <li key={fish.id}>
+                  <button
+                    type="button"
+                    id={`ocean-result-${fish.id}`}
+                    onClick={() => this.selectAccessibleFish(fish)}
+                  >
+                    {I18n.t('a11yObjectNumber', {
+                      number: index + 1,
+                      description: describeObject(fish),
+                    })}
+                  </button>
+                </li>
+              ),
+            )}
+          </ul>
+          {(state.showRecallFish ? state.recallFish : state.pondFish).length ===
+            0 && <p>{I18n.t('a11yNoObjects')}</p>}
+        </details>
         {state.pondPanelShowing && <PondPanel />}
       </Body>
     );

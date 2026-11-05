@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import snail from '@/assets/images/snail-large.png';
 import Button from '@/oceans/components/common/Button';
+import Dialog from '@/oceans/components/common/Dialog';
 import I18n from '@/oceans/i18n';
 
 interface ConfirmationDialogProps {
@@ -16,7 +17,13 @@ class ConfirmationDialog extends React.Component<ConfirmationDialogProps> {
   render() {
     return (
       <div className="ocean-confirmation-dialog__bg">
-        <div className="ocean-confirmation-dialog">
+        <Dialog
+          className="ocean-confirmation-dialog"
+          aria-labelledby="ocean-confirm-title"
+          aria-describedby="ocean-confirm-description"
+          onDismiss={this.props.onNoClick}
+          returnFocusId="ocean-erase-button"
+        >
           <div className="ocean-confirmation-dialog__content">
             <img
               src={snail}
@@ -24,10 +31,16 @@ class ConfirmationDialog extends React.Component<ConfirmationDialogProps> {
               alt=""
             />
             <div>
-              <div className="ocean-confirmation-dialog__header confirmation-text">
+              <div
+                id="ocean-confirm-title"
+                className="ocean-confirmation-dialog__header confirmation-text"
+              >
                 {I18n.t('areYouSure')}
               </div>
-              <div className="ocean-confirmation-dialog__text">
+              <div
+                id="ocean-confirm-description"
+                className="ocean-confirmation-dialog__text"
+              >
                 {I18n.t('eraseWarning')}
               </div>
             </div>
@@ -46,7 +59,7 @@ class ConfirmationDialog extends React.Component<ConfirmationDialogProps> {
               {I18n.t('cancel')}
             </Button>
           </div>
-        </div>
+        </Dialog>
       </div>
     );
   }

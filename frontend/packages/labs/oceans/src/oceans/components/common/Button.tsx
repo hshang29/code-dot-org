@@ -7,11 +7,19 @@ import soundLibrary from '@/oceans/models/soundLibrary';
 interface ButtonProps
   extends Pick<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    'className' | 'style' | 'id' | 'children' | 'disabled'
+    | 'className'
+    | 'style'
+    | 'id'
+    | 'children'
+    | 'disabled'
+    | 'aria-label'
+    | 'aria-describedby'
+    | 'aria-pressed'
   > {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => boolean | void;
   sound?: string;
   dismissGuide?: boolean;
+  preserveFocusWhenDisabled?: boolean;
 }
 
 /**
@@ -22,6 +30,10 @@ interface ButtonProps
 class Button extends React.Component<ButtonProps> {
   onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    if (this.props.disabled) {
+      event.preventDefault();
+      return;
+    }
     if (this.props.dismissGuide !== false) {
       guide.dismissCurrentGuide(true);
     }
@@ -44,7 +56,14 @@ class Button extends React.Component<ButtonProps> {
         className={className}
         style={this.props.style}
         onClick={this.onClick}
-        disabled={this.props.disabled}
+        disabled={this.props.disabled && !this.props.preserveFocusWhenDisabled}
+        aria-disabled={
+          (this.props.disabled && this.props.preserveFocusWhenDisabled) ||
+          undefined
+        }
+        aria-label={this.props['aria-label']}
+        aria-describedby={this.props['aria-describedby']}
+        aria-pressed={this.props['aria-pressed']}
       >
         {this.props.children}
       </button>

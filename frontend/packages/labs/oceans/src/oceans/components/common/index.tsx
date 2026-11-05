@@ -5,7 +5,11 @@ import loadingGif from '@/assets/images/loading.gif';
 import Button from '@/oceans/components/common/Button';
 import ConfirmationDialog from '@/oceans/components/common/ConfirmationDialog';
 import Guide from '@/oceans/components/common/Guide';
+import I18n from '@/oceans/i18n';
 import guide from '@/oceans/models/guide';
+import {getState} from '@/oceans/state';
+
+import SceneDescription from './SceneDescription';
 
 interface BodyProps {
   children?: React.ReactNode;
@@ -25,6 +29,7 @@ class Body extends React.Component<BodyProps> {
     return (
       <div className="ocean-body" onClick={this.props.onClick}>
         <div className="ocean-body__children" inert={!!modalGuide || undefined}>
+          <SceneDescription state={getState()} />
           {this.props.children}
         </div>
         <Guide />
@@ -45,7 +50,11 @@ const Content = ({children}: ContentProps) => (
 /** Centered loading spinner.  Used while assets / models warm up. */
 const Loading = () => (
   <Body>
-    <img src={loadingGif} className="ocean-loading" alt="Loading" />
+    <img
+      src={loadingGif}
+      className="ocean-loading"
+      alt={I18n.t('a11yLoading')}
+    />
   </Body>
 );
 

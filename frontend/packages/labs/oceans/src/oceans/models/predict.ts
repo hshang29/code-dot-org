@@ -75,6 +75,7 @@ const onLoadComplete = (oceanData: ReturnType<typeof generateOcean>): void => {
   // of whether a Training animation was mid-flight when Continue was clicked.
   setState({
     fishData: oceanData,
+    accessiblePredictions: [],
     currentMode: Modes.Predicting,
     isRunning: false,
     isPaused: false,

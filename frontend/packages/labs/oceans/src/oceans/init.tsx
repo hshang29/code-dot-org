@@ -20,6 +20,7 @@ export interface InitAllOptions {
   onContinue?: () => void;
   guides?: string;
   textToSpeechLocale?: string;
+  locale?: string;
   playSound: (id: string, options?: {volume?: number}) => void;
   registerSound: (descriptor: {id: string; mp3: string}) => void;
   i18n?: Record<string, (opts?: Record<string, unknown>) => string>;
@@ -51,7 +52,12 @@ export const initAll = function (options: InitAllOptions): void {
 
   soundLibrary.loadSounds();
 
-  I18n.initI18n(options.i18n);
+  I18n.initI18n(
+    options.i18n,
+    options.locale || document.documentElement.lang || 'en',
+  );
+  canvas.setAttribute('aria-hidden', 'true');
+  backgroundCanvas.setAttribute('aria-hidden', 'true');
 
   // Set initial state for UI elements.
   setInitialState({

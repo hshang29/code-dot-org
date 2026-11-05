@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 
+import {Button} from '@/oceans/components/common';
+import {describeObject} from '@/oceans/describeObject';
 import I18n from '@/oceans/i18n';
 import {getState, setState} from '@/oceans/state';
 import Markdown from '@/utils/Markdown';
@@ -19,7 +21,13 @@ function barWidthStyle(percent: number): React.CSSProperties {
 
 class PondPanel extends React.Component {
   onPondPanelClick = (e: React.MouseEvent) => {
+    const selected = getState().pondClickedFish;
     setState({pondPanelShowing: false});
+    document
+      .getElementById(
+        selected ? `ocean-result-${selected.id}` : 'uitest-info-btn',
+      )
+      ?.focus();
     e.stopPropagation();
   };
 
@@ -32,6 +40,21 @@ class PondPanel extends React.Component {
 
     return (
       <div>
+        <Button
+          className="ocean-panel-close"
+          dismissGuide={false}
+          onClick={this.onPondPanelClick}
+        >
+          {I18n.t('a11yCloseDetails')}
+        </Button>
+        <div className="ocean-visually-hidden" role="status" aria-atomic="true">
+          {state.pondClickedFish &&
+            describeObject(
+              [...state.pondFish, ...state.recallFish].find(
+                fish => fish.id === state.pondClickedFish!.id,
+              ),
+            )}
+        </div>
         {!state.pondClickedFish && (
           <div
             className="ocean-pond-panel--left"

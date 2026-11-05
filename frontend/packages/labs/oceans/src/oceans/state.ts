@@ -43,6 +43,8 @@ export interface State {
   ctx: CanvasRenderingContext2D | null;
   trainer: Trainer | null;
   trainingIndex: number;
+  /** Predictions already presented by the animation, in presentation order. */
+  accessiblePredictions: Array<{id: number | string; classId: number}>;
   isRunning: boolean;
   isPaused: boolean;
   moveTime: number;
@@ -119,6 +121,7 @@ const initialState: State = {
   ctx: null,
   trainer: null,
   trainingIndex: 0,
+  accessiblePredictions: [],
   isRunning: false,
   isPaused: false,
   moveTime: 1000,

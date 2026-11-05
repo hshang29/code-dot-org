@@ -508,6 +508,18 @@ const drawMovingFish = (state: State): void => {
   }
 
   if (state.currentMode === Modes.Predicting) {
+    if (
+      centerFish &&
+      !state.accessiblePredictions.some(item => item.id === centerFish!.id)
+    ) {
+      const result = centerFish.getResult() as {predictedClassId: number};
+      setState({
+        accessiblePredictions: [
+          ...state.accessiblePredictions,
+          {id: centerFish.id, classId: result.predictedClassId},
+        ],
+      });
+    }
     currentPredictedClassId = centerFish
       ? (centerFish.getResult() as {predictedClassId: number}).predictedClassId
       : null;

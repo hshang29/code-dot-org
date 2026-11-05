@@ -6,7 +6,9 @@ import Guide from '@/oceans/components/common/Guide';
 import guide from '@/oceans/models/guide';
 import {getState, resetState, setState} from '@/oceans/state';
 
-vi.mock('@/oceans/i18n', () => ({default: {t: (key: string) => key}}));
+vi.mock('@/oceans/i18n', () => ({
+  default: {t: (key: string) => key, getMessageLocale: () => 'en'},
+}));
 
 vi.mock('react-typist', () => ({default: () => <span>Typing…</span>}));
 vi.mock('@/oceans/models/guide', () => ({

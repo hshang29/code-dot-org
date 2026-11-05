@@ -126,7 +126,7 @@ class Words extends React.Component<Record<string, never>, WordsState> {
       <Body>
         <Content>
           {entry.textKey && (
-            <div className="ocean-words__text">{I18n.t(entry.textKey)} </div>
+            <h3 className="ocean-words__text">{I18n.t(entry.textKey)} </h3>
           )}
           {this.state.choices.map((item, itemIndex) => (
             <Button

@@ -17,6 +17,10 @@ import Sounds from './oceans/Sounds';
 export interface OceansLabProps {
   /** One of the AppMode values (e.g. 'fishvtrash'). Defaults to FishVTrash. */
   appMode?: AppModeValue;
+  /** Language of the supplied messages (BCP-47). */
+  locale?: string;
+  /** Localized messages, including accessibility descriptions. */
+  i18n?: Record<string, (options?: Record<string, unknown>) => string>;
   /** Guide key for the on-screen guide sequence (e.g. 'K5'). */
   guides?: string;
   /** BCP-47 locale for text-to-speech (e.g. 'en'). */
@@ -35,6 +39,8 @@ export default function OceansLab({
   guides,
   textToSpeechLocale,
   onContinue,
+  locale,
+  i18n,
 }: OceansLabProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backgroundCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -63,6 +69,8 @@ export default function OceansLab({
       appMode,
       guides,
       textToSpeechLocale,
+      locale,
+      i18n,
       onContinue: stableOnContinue,
       canvas: canvasRef.current as HTMLCanvasElement,
       backgroundCanvas: backgroundCanvasRef.current as HTMLCanvasElement,
@@ -74,7 +82,7 @@ export default function OceansLab({
       sounds.stopAllAudio();
       stopUIRerender();
     };
-  }, [appMode, guides, textToSpeechLocale, stableOnContinue]);
+  }, [appMode, guides, textToSpeechLocale, stableOnContinue, locale, i18n]);
 
   // 16:9 responsive wrapper — padding-top 56.25% creates the aspect-ratio box.
   // Canvas JS resolution is set to 1024×576 by initAll; CSS width/height 100%

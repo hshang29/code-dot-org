@@ -41,7 +41,7 @@ class Train extends React.Component<Record<string, never>, TrainState> {
 
     return (
       <Body>
-        <div className="ocean-train__question">{state.trainingQuestion}</div>
+        <h3 className="ocean-train__question">{state.trainingQuestion}</h3>
         <div className="ocean-train__bot">
           <img src={aiBotHead} className={botHeadClassName} alt="" />
           <img src={aiBotBody} className="ocean-train__bot-body" alt="" />
@@ -55,6 +55,7 @@ class Train extends React.Component<Record<string, never>, TrainState> {
         <button
           type="button"
           className="ocean-erase-button"
+          id="ocean-erase-button"
           aria-label={I18n.t('erase')}
           onClick={() => {
             setState({
@@ -71,7 +72,9 @@ class Train extends React.Component<Record<string, never>, TrainState> {
         <div className="ocean-train__buttons">
           <Button
             className="ocean-train__button-no"
+            aria-describedby="ocean-scene-description"
             disabled={state.isRunning}
+            preserveFocusWhenDisabled
             onClick={() => {
               this.setState({headOpen: true});
               return train.onClassifyFish(false);
@@ -84,7 +87,9 @@ class Train extends React.Component<Record<string, never>, TrainState> {
           </Button>
           <Button
             className="ocean-train__button-yes"
+            aria-describedby="ocean-scene-description"
             disabled={state.isRunning}
+            preserveFocusWhenDisabled
             onClick={() => {
               this.setState({headOpen: true});
               return train.onClassifyFish(true);

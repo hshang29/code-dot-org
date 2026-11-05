@@ -9,6 +9,7 @@ import * as React from 'react';
 
 import {Body, Button} from '@/oceans/components/common';
 import constants, {AppMode, Modes} from '@/oceans/constants';
+import {describeObject} from '@/oceans/describeObject';
 import {$time, currentRunTime, finishMovement} from '@/oceans/helpers';
 import I18n from '@/oceans/i18n';
 import modeHelpers from '@/oceans/modeHelpers';
@@ -112,11 +113,32 @@ class Predict extends React.Component<Record<string, never>, PredictState> {
 
     return (
       <Body>
+        <details className="ocean-accessible-results">
+          <summary>{I18n.t('a11yPredictions')}</summary>
+          {state.accessiblePredictions.length === 0 && (
+            <p>{I18n.t('a11yNoPredictions')}</p>
+          )}
+          <ol>
+            {state.accessiblePredictions.map(prediction => (
+              <li key={prediction.id}>
+                {I18n.t('a11yPredictionItem', {
+                  description: describeObject(
+                    state.fishData.find(fish => fish.id === prediction.id),
+                  ),
+                  label:
+                    prediction.classId === 0
+                      ? (state.word ?? '')
+                      : I18n.t('notWord', {word: state.word ?? ''}),
+                })}
+              </li>
+            ))}
+          </ol>
+        </details>
         {this.state.displayControls && (
           <div className="ocean-media-controls" id="uitest-media-ctrl">
             <button
               type="button"
-              aria-label="Rewind"
+              aria-label={I18n.t('a11yRewind')}
               onClick={() => this.onScaleTime(true)}
               className={rewindClassName}
               key={MediaControl.Rewind}
@@ -130,7 +152,7 @@ class Predict extends React.Component<Record<string, never>, PredictState> {
             </button>
             <button
               type="button"
-              aria-label={state.isRunning ? 'Pause' : 'Play'}
+              aria-label={I18n.t(state.isRunning ? 'a11yPause' : 'a11yPlay')}
               onClick={this.onPressPlay}
               className="ocean-media-control"
               key={MediaControl.Play}
@@ -142,7 +164,7 @@ class Predict extends React.Component<Record<string, never>, PredictState> {
             </button>
             <button
               type="button"
-              aria-label="Fast forward"
+              aria-label={I18n.t('a11yFastForward')}
               onClick={() => this.onScaleTime(false)}
               className={fastForwardClassName}
               key={MediaControl.FastForward}

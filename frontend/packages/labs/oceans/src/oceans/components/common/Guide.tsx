@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 import Typist from 'react-typist';
 
@@ -8,6 +8,7 @@ import arrowDownImage from '@/assets/images/arrow-down.png';
 import fingerClickIcon1 from '@/assets/images/finger-click-icon-1.svg';
 import fingerClickIcon2 from '@/assets/images/finger-click-icon-2.svg';
 import Button from '@/oceans/components/common/Button';
+import Dialog from '@/oceans/components/common/Dialog';
 import I18n from '@/oceans/i18n';
 import guide from '@/oceans/models/guide';
 import soundLibrary from '@/oceans/models/soundLibrary';
@@ -48,8 +49,6 @@ const GUIDE_ARROW_CLASS: Record<string, string> = {
 };
 
 class Guide extends React.Component<Record<string, never>> {
-  guideDialogRef = React.createRef<HTMLDivElement>();
-  lastFocusedGuideId: string | null = null;
   state = {revealedGuideId: null as string | null};
 
   revealText = () => {
@@ -65,38 +64,12 @@ class Guide extends React.Component<Record<string, never>> {
     if (guide.dismissCurrentGuide(true)) stopTextToSpeech();
   };
 
-  componentDidUpdate() {
-    // Focus the dialog only when the guide changes, not on every re-render
-    const currentGuide = guide.getCurrentGuide();
-    const currentGuideId = currentGuide ? currentGuide.id : null;
-
-    if (
-      currentGuideId !== this.lastFocusedGuideId &&
-      currentGuide &&
-      this.guideDialogRef &&
-      this.guideDialogRef.current
-    ) {
-      // `focusVisible` is a non-standard option (Firefox extension) accepted
-      // by some browsers; cast since it isn't in lib.dom's FocusOptions.
-      this.guideDialogRef.current.focus({focusVisible: false} as FocusOptions);
-      this.lastFocusedGuideId = currentGuideId;
-    } else if (!currentGuide) {
-      this.lastFocusedGuideId = null;
-    }
-  }
   onTypingDone() {
     clearInterval(
       getState().guideTypingTimer as ReturnType<typeof setInterval>,
     );
     setState({guideShowing: true, guideTypingTimer: undefined});
   }
-
-  onGuideKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') {
-      e.preventDefault();
-      this.onGuideClick();
-    }
-  };
 
   onGuideClick = () => {
     const state = getState();
@@ -251,9 +224,19 @@ class Guide extends React.Component<Record<string, never>> {
               }
               id="uitest-dismiss-guide"
             >
-              <div
-                aria-labelledby="guide-heading"
-                tabIndex={-1}
+              <Dialog
+                modal={!currentGuide.noDimBackground}
+                lang={I18n.getMessageLocale(
+                  currentGuide.style === 'Info'
+                    ? 'didYouKnow'
+                    : 'a11yInstructions',
+                )}
+                aria-label={I18n.t(
+                  currentGuide.style === 'Info'
+                    ? 'didYouKnow'
+                    : 'a11yInstructions',
+                )}
+                aria-describedby="ocean-guide-text"
                 className={`guide-dialog ${guideClassName}`}
                 onClick={event => {
                   event.stopPropagation();
@@ -291,10 +274,11 @@ class Guide extends React.Component<Record<string, never>> {
                     }
                   >
                     <div
-                      ref={this.guideDialogRef}
-                      aria-live="polite"
-                      tabIndex={0}
-                      onKeyDown={this.onGuideKeyDown}
+                      id="ocean-guide-text"
+                      lang={I18n.getMessageLocale(currentGuide.id)}
+                      aria-live={
+                        currentGuide.noDimBackground ? 'polite' : undefined
+                      }
                       className="ocean-guide__final-text"
                     >
                       {currentGuide.textFn(getState())}
@@ -314,6 +298,16 @@ class Guide extends React.Component<Record<string, never>> {
                       />
                     </div>
                   )}
+                  {!currentGuide.noDimBackground &&
+                    currentGuide.style !== 'Info' && (
+                      <Button
+                        className="ocean-visually-hidden ocean-focusable"
+                        dismissGuide={false}
+                        onClick={this.onInfoContinue}
+                      >
+                        {I18n.t('continue')}
+                      </Button>
+                    )}
                   {currentGuide.style === 'Info' && (
                     <Button
                       className="ocean-guide__info-button"
@@ -324,7 +318,7 @@ class Guide extends React.Component<Record<string, never>> {
                     </Button>
                   )}
                 </div>
-              </div>
+              </Dialog>
             </div>
             {currentGuide.arrow && (
               <img src={arrowDownImage} className={arrowClassName} alt="" />

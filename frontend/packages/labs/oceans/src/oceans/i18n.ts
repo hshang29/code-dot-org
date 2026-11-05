@@ -8,6 +8,8 @@ type CompiledMessages = Record<
 >;
 
 let messages: CompiledMessages | undefined;
+let locale = 'en';
+let translatedKeys = new Set<string>();
 
 /**
  * Initialises the i18n runtime with optional caller-supplied message overrides.
@@ -16,7 +18,9 @@ let messages: CompiledMessages | undefined;
  *
  * @param i18n - Optional compiled message overrides keyed by message id.
  */
-const initI18n = (i18n: CompiledMessages = {}): void => {
+const initI18n = (i18n: CompiledMessages = {}, language = 'en'): void => {
+  locale = language;
+  translatedKeys = new Set(Object.keys(i18n));
   // English pluralisation rules are used for all locales for now.
   const mf = new MessageFormat('en');
   messages = {...(mf.compile(data) as unknown as CompiledMessages), ...i18n};
@@ -39,5 +43,7 @@ const t = (key: string, options?: Record<string, unknown>): string => {
 
 export default {
   initI18n,
+  getLocale: () => locale,
+  getMessageLocale: (key: string) => (translatedKeys.has(key) ? locale : 'en'),
   t,
 };

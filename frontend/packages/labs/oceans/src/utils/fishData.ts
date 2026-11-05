@@ -202,6 +202,8 @@ export interface FishComponent {
    * Mutated in-place by {@link initFishData} to become normalized + one-hot augmented.
    */
   knnData: number[];
+  /** Original measurements retained for accessible descriptions. */
+  descriptionData?: number[];
   /** Which render layer this component occupies. */
   type: FishBodyPartValue;
   /**
@@ -1824,6 +1826,8 @@ export const initFishData = (): void => {
           }
         });
         Object.values(variations).forEach((component, idx) => {
+          if ('src' in component)
+            component.descriptionData = [...component.knnData];
           component.fieldInfos = [];
           for (let i = 0; i < component.knnData.length; ++i) {
             component.fieldInfos.push({

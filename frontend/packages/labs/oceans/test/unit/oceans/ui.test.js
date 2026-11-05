@@ -3,6 +3,7 @@ import * as React from 'react';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 
 import {Modes} from '../../../src/oceans/constants';
+import I18n from '../../../src/oceans/i18n';
 import {resetState, setState} from '../../../src/oceans/state';
 
 // Avoid canvas operations in jsdom.
@@ -13,6 +14,7 @@ vi.mock('../../../src/oceans/models/soundLibrary', () => ({
 describe('UI', () => {
   beforeEach(async () => {
     resetState();
+    I18n.initI18n();
   });
 
   it('renders a loading indicator in Loading mode', async () => {
